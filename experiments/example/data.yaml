@@ -1,7 +1,0 @@
-train:
-  root: # root dir of train images
-  anno: # annotations of train images (coco format)
-val:
-  root: # root dir of test images
-  anno: # annotations of test images (coco format)
-masks: False

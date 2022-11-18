@@ -1,0 +1,61 @@
+seed: 42
+
+data:
+  dataset_type: custom # [custom, coco, panoptic]
+  train:
+    root: # root dir of train images
+    anno: # annotations of train images (coco format)
+  val:
+    root: # root dir of test images
+    anno: # annotations of test images (coco format)
+  remove_difficult: False
+  masks: &if_mask False
+
+trainer:
+  lr: 0.0001
+  lr_backbone: 0.00001
+  batch_size: 8
+  num_workers: 2
+  weight_decay: 0.0001
+  start_epoch: 0
+  epochs: 300
+  lr_drop: 200
+  clip_max_norm: 0.1
+
+saver:
+  output_dir: ""
+  frozen_weights: null # Path to the pretrained model. If set, only the mask head will be trained.
+  load_pretrain: "" # load pretrained weights
+  resume: ""
+
+model:
+  backbone:
+    type: resnet50
+    return_interm_layers: *if_mask
+    dilation: False # If true, we replace stride with dilation in the last convolutional block (DC5)
+    position_embedding: 
+      type: sine # [sine, learned]
+      hidden_dim: &hidden_dim 256
+  transformer:
+    hidden_dim: *hidden_dim
+    enc_layers: 6
+    dec_layers: 6
+    dim_feedforward: 2048
+    dropout: 0.1
+    nheads: 8
+    num_queries: 100
+    pre_norm: False
+  head:
+    num_classes: 13 # with no background
+    masks: *if_mask
+  matcher:
+    set_cost_class: 1 # Class coefficient in the matching cost
+    set_cost_bbox: 5 # L1 box coefficient in the matching cost
+    set_cost_giou: 2 # giou box coefficient in the matching cost
+  loss:
+    aux_loss: True
+    mask_loss_coef: 1
+    dice_loss_coef: 1
+    bbox_loss_coef: 5
+    giou_loss_coef: 2
+    eos_coef: 0.1 # Relative classification weight of the no-object class

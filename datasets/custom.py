@@ -9,8 +9,6 @@ from pathlib import Path
 import torch
 import torch.utils.data
 import torchvision
-import yaml
-from easydict import EasyDict
 from pycocotools import mask as coco_mask
 
 import datasets.transforms as T
@@ -25,7 +23,7 @@ class CocoDetection(torchvision.datasets.CocoDetection):
     def __getitem__(self, idx):
         img, target = super(CocoDetection, self).__getitem__(idx)
         image_id = self.ids[idx]
-        target = {'image_id': image_id, 'annotations': target}
+        target = {"image_id": image_id, "annotations": target}
         img, target = self.prepare(img, target)
         if self._transforms is not None:
             img, target = self._transforms(img, target)
@@ -61,7 +59,7 @@ class ConvertCocoPolysToMask(object):
 
         anno = target["annotations"]
 
-        anno = [obj for obj in anno if 'iscrowd' not in obj or obj['iscrowd'] == 0]
+        anno = [obj for obj in anno if "iscrowd" not in obj or obj["iscrowd"] == 0]
 
         boxes = [obj["bbox"] for obj in anno]
         # guard against no boxes via resizing
@@ -104,7 +102,9 @@ class ConvertCocoPolysToMask(object):
 
         # for conversion to coco api
         area = torch.tensor([obj["area"] for obj in anno])
-        iscrowd = torch.tensor([obj["iscrowd"] if "iscrowd" in obj else 0 for obj in anno])
+        iscrowd = torch.tensor(
+            [obj["iscrowd"] if "iscrowd" in obj else 0 for obj in anno]
+        )
         target["area"] = area[keep]
         target["iscrowd"] = iscrowd[keep]
 
@@ -116,45 +116,52 @@ class ConvertCocoPolysToMask(object):
 
 def make_coco_transforms(image_set):
 
-    normalize = T.Compose([
-        T.ToTensor(),
-        T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-    ])
+    normalize = T.Compose(
+        [T.ToTensor(), T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])]
+    )
 
     scales = [480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800]
 
-    if image_set == 'train':
-        return T.Compose([
-            T.RandomHorizontalFlip(),
-            T.RandomSelect(
-                T.RandomResize(scales, max_size=1333),
-                T.Compose([
-                    T.RandomResize([400, 500, 600]),
-                    T.RandomSizeCrop(384, 600),
+    if image_set == "train":
+        return T.Compose(
+            [
+                T.RandomHorizontalFlip(),
+                T.RandomSelect(
                     T.RandomResize(scales, max_size=1333),
-                ])
-            ),
-            normalize,
-        ])
+                    T.Compose(
+                        [
+                            T.RandomResize([400, 500, 600]),
+                            T.RandomSizeCrop(384, 600),
+                            T.RandomResize(scales, max_size=1333),
+                        ]
+                    ),
+                ),
+                normalize,
+            ]
+        )
 
-    if image_set == 'val':
-        return T.Compose([
-            T.RandomResize([800], max_size=1333),
-            normalize,
-        ])
+    if image_set == "val":
+        return T.Compose(
+            [
+                T.RandomResize([800], max_size=1333),
+                normalize,
+            ]
+        )
 
-    raise ValueError(f'unknown {image_set}')
+    raise ValueError(f"unknown {image_set}")
 
 
-def build(image_set, cfg):
-    with open(cfg) as f:
-        cfg = EasyDict(yaml.load(f, Loader=yaml.FullLoader))
-
+def build(image_set, config):
     PATHS = {
-        "train": (Path(cfg.train.root), Path(cfg.train.anno)),
-        "val": (Path(cfg.val.root), Path(cfg.val.anno)),
+        "train": (Path(config.train.root), Path(config.train.anno)),
+        "val": (Path(config.val.root), Path(config.val.anno)),
     }
 
     img_folder, ann_file = PATHS[image_set]
-    dataset = CocoDetection(img_folder, ann_file, transforms=make_coco_transforms(image_set), return_masks=cfg.masks)
+    dataset = CocoDetection(
+        img_folder,
+        ann_file,
+        transforms=make_coco_transforms(image_set),
+        return_masks=config.masks,
+    )
     return dataset
