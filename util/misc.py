@@ -518,7 +518,7 @@ def load_pretrain(path, model):
 
         # fix size mismatch error
         ignore_keys = []
-        for k, v in checkpoint["state_dict"].items():
+        for k, v in checkpoint["model"].items():
             if k in model.state_dict().keys():
                 v_dst = model.state_dict()[k]
                 if v.shape != v_dst.shape:
@@ -531,12 +531,12 @@ def load_pretrain(path, model):
                         )
 
         for k in ignore_keys:
-            checkpoint["state_dict"].pop(k)
+            checkpoint["model"].pop(k)
 
-        model.load_state_dict(checkpoint["state_dict"], strict=False)
+        model.load_state_dict(checkpoint["model"], strict=False)
 
         if rank == 0:
-            ckpt_keys = set(checkpoint["state_dict"].keys())
+            ckpt_keys = set(checkpoint["model"].keys())
             own_keys = set(model.state_dict().keys())
             missing_keys = own_keys - ckpt_keys
             for k in missing_keys:
