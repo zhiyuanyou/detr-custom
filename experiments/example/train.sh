@@ -1,3 +1,3 @@
 export PYTHONPATH=../../:$PYTHONPATH
 CUDA_VISIBLE_DEVICES=$2
-torchrun ../../main.py --dataset_file custom --world_size $1
+python -m torch.distributed.launch --nproc_per_node=$1 --use_env ../../main.py --dataset_file custom --world_size $1
