@@ -1,13 +1,8 @@
 seed: 42
 
 data:
-  dataset_type: custom # [custom, coco, panoptic]
-  train:
-    root: # root dir of train images
-    anno: # annotations of train images (coco format)
-  val:
-    root: # root dir of test images
-    anno: # annotations of test images (coco format)
+  dataset_type: coco # [custom, coco, panoptic]
+  root_dir: # root dir of coco
   remove_difficult: False
   masks: &if_mask False
 
@@ -46,7 +41,7 @@ model:
     num_queries: 100
     pre_norm: False
   head:
-    num_classes: # max id for classes
+    num_classes: 90 # max id for classes
     masks: *if_mask
   matcher:
     set_cost_class: 1 # Class coefficient in the matching cost

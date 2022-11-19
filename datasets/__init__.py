@@ -18,7 +18,7 @@ def get_coco_api_from_dataset(dataset):
 
 def build_dataset(image_set, config):
     if config.dataset_type == "coco":
-        return build_coco(image_set, args)
+        return build_coco(image_set, config)
     if config.dataset_type == "coco_panoptic":
         # to avoid making panopticapi required for coco
         from .coco_panoptic import build as build_coco_panoptic
