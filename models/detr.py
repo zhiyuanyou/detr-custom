@@ -350,7 +350,7 @@ class MLP(nn.Module):
         return x
 
 
-def build(config, args, dataset_file, train_backbone):
+def build(config, args, dataset_type, train_backbone):
     # the `num_classes` naming here is somewhat misleading.
     # it indeed corresponds to `max_obj_id + 1`, where max_obj_id
     # is the maximum id for a class in your dataset. For example,
@@ -402,7 +402,7 @@ def build(config, args, dataset_file, train_backbone):
     postprocessors = {"bbox": PostProcess()}
     if config.head.masks:
         postprocessors["segm"] = PostProcessSegm()
-        if dataset_file == "coco_panoptic":
+        if dataset_type == "coco_panoptic":
             is_thing_map = {i: i <= 90 for i in range(201)}
             postprocessors["panoptic"] = PostProcessPanoptic(
                 is_thing_map, threshold=0.85
