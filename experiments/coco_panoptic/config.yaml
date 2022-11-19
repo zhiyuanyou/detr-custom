@@ -1,15 +1,16 @@
 seed: 42
 
 data:
-  dataset_type: coco # [custom, coco, panoptic]
+  dataset_type: coco_panoptic # [custom, coco, panoptic]
   coco_dir: # root dir of coco
+  coco_panoptic_dir: # root dir of coco panoptic
   remove_difficult: False
-  masks: &if_mask False
+  masks: &if_mask True
 
 trainer:
   lr: 0.0001
   lr_backbone: 0.00001
-  batch_size: 8
+  batch_size: 1
   num_workers: 2
   weight_decay: 0.0001
   start_epoch: 0
@@ -19,8 +20,8 @@ trainer:
 
 saver:
   output_dir: ./checkpoints/
-  frozen_weights: null # Path to the pretrained model. If set, only the mask head will be trained.
-  load_pretrain: ../../pretrained_models/detr-r50-e632da11.pth # load pretrained weights
+  frozen_weights: &freeze_detr null # Path to the pretrained model. If set, only the mask head will be trained.
+  load_pretrain: ../../pretrained_models/detr-r50-panoptic-00ce5173.pth # load pretrained weights
   resume: ""
 
 model:
@@ -41,8 +42,9 @@ model:
     num_queries: 100
     pre_norm: False
   head:
-    num_classes: 90 # max id for classes
+    num_classes: 249 # max id for classes
     masks: *if_mask
+    freeze_detr: *freeze_detr
   matcher:
     set_cost_class: 1 # Class coefficient in the matching cost
     set_cost_bbox: 5 # L1 box coefficient in the matching cost

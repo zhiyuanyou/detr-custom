@@ -124,7 +124,7 @@ def main(args):
 
     if config.data.dataset_type == "coco_panoptic":
         # We also evaluate AP during panoptic training, on original coco DS
-        coco_val = datasets.coco.build("val", args)
+        coco_val = datasets.coco.build("val", config.data)
         base_ds = get_coco_api_from_dataset(coco_val)
     else:
         base_ds = get_coco_api_from_dataset(dataset_val)

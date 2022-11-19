@@ -374,7 +374,7 @@ def build(config, args, dataset_file, train_backbone):
         aux_loss=config.loss.aux_loss,
     )
     if config.head.masks:
-        model = DETRsegm(model, freeze_detr=(config.saver.frozen_weights is not None))
+        model = DETRsegm(model, freeze_detr=(config.head.freeze_detr is not None))
     matcher = build_matcher(config.matcher)
     weight_dict = {"loss_ce": 1, "loss_bbox": config.loss.bbox_loss_coef}
     weight_dict["loss_giou"] = config.loss.giou_loss_coef

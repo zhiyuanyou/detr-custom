@@ -152,7 +152,7 @@ def make_coco_transforms(image_set):
 
 
 def build(image_set, config):
-    root = Path(config.root_dir)
+    root = Path(config.coco_dir)
     assert root.exists(), f"provided COCO path {root} does not exist"
     mode = "instances"
     PATHS = {

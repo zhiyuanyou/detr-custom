@@ -23,7 +23,7 @@ def build_dataset(image_set, config):
         # to avoid making panopticapi required for coco
         from .coco_panoptic import build as build_coco_panoptic
 
-        return build_coco_panoptic(image_set, args)
+        return build_coco_panoptic(image_set, config)
     if config.dataset_type == "custom":
         return build_custom(image_set, config)
     raise ValueError(f"dataset {config.dataset_type} not supported")
