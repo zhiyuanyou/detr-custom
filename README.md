@@ -1,7 +1,11 @@
+## What I have changed by saying *custom*
+
+- change the settings **_from argparse to yaml_**, which makes the settings *clearer* and the shell scripts *more concise*. 
+- provide three experimental examples: **_custom, coco, and coco_panoptic_**, including *config.yaml, train.sh, and eval.sh*. You could **_use your own datasets_** following the **_custom_** example. 
+
+
 **DE⫶TR**: End-to-End Object Detection with Transformers
 ========
-
-[![Support Ukraine](https://img.shields.io/badge/Support-Ukraine-FFD500?style=flat&labelColor=005BBB)](https://opensource.fb.com/support-ukraine)
 
 PyTorch training code and pretrained models for **DETR** (**DE**tection **TR**ansformer).
 We replace the full complex hand-crafted object detection pipeline with a Transformer, and match Faster R-CNN with a ResNet-50, obtaining **42 AP** on COCO using half the computation power (FLOPs) and the same number of parameters. Inference in 50 lines of PyTorch.
