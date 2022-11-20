@@ -27,6 +27,7 @@ class CocoDetection(torchvision.datasets.CocoDetection):
         img, target = self.prepare(img, target)
         if self._transforms is not None:
             img, target = self._transforms(img, target)
+        target = T.target_box_xyxy_to_cxcywh(target, *img.shape[-2:])
         return img, target
 
 

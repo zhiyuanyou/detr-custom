@@ -7,6 +7,7 @@ import torch
 from panopticapi.utils import rgb2id
 from PIL import Image
 
+import datasets.transforms as T
 from util.box_ops import masks_to_boxes
 
 from .coco import make_coco_transforms
@@ -77,7 +78,7 @@ class CocoPanoptic:
 
         if self.transforms is not None:
             img, target = self.transforms(img, target)
-
+        target = T.target_box_xyxy_to_cxcywh(target, *img.shape[-2:])
         return img, target
 
     def __len__(self):
