@@ -17,6 +17,7 @@ import util.misc as utils
 from datasets import build_dataset, get_coco_api_from_dataset
 from engine import evaluate, train_one_epoch
 from models import build_model
+from models.misc import update_queries
 
 
 def get_args_parser():
@@ -157,6 +158,7 @@ def main(args):
             config.trainer.start_epoch = checkpoint["epoch"] + 1
 
     if args.eval:
+        update_queries(model_without_ddp, config.model, args.device)
         test_stats, coco_evaluator = evaluate(
             model,
             criterion,
